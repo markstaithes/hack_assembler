@@ -87,38 +87,6 @@ class Parser:
         # return the command - the first and last characters (ie the parens)
         return self.command[1:][:-1]
 
-    @property
-    def dest(self):
-        return self._dest
-    
-    @dest.setter
-    def dest(self, value):
-        self._dest = value
-
-    @property
-    def comp(self):
-        return self._comp
-
-    @comp.setter
-    def comp(self, value):
-        self._comp = value
-
-    @property
-    def jump(self):
-        return self._jump
-   
-    @jump.setter
-    def jump(self, value):
-        self._jump = value
-
-    @property
-    def address(self):
-        return self._address
-
-    @address.setter
-    def address(self, value):
-        self._address = value
-
 class Evaluator:
     """An evaluator object provides the facility for translating Hack assembly
     mnemonics into binary code according to the specifications of the Hack
