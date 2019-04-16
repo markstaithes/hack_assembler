@@ -8,10 +8,16 @@ class Parser:
     assembly language command, parses it, and provides convenient access to the
     command's components (fields and symbols). In addition, removes all white
     space and comments."""
-    def __init__(self, infile):
-        self.clean_lines(infile)
 
-    def clean_lines(self, program_file):
+    def __init__(self, infile):
+        self.instructions = Parser.clean_lines(infile)
+
+    def clean_lines(program_file):
+        """This method 'cleans' the input instructions, given by an input
+        assembly file, and outputs a python list of strings, each string being
+        a Hack assembly instruction. The 'cleaning' is done  by removing all
+        comments and whitespace."""
+
         instructions = []
         with open(program_file) as f:
             for line in f:
@@ -26,7 +32,7 @@ class Parser:
                         # remove whitespace between instructions and comments
                         cleanline.strip() 
                         instructions.append(cleanline) 
-        self.instructions = instructions
+        return instructions
 
     def is_l_instruct(self):
         return self.command[0] == '('
@@ -42,47 +48,45 @@ class Parser:
 
     def advance(self):
         self.command = self.instructions.pop(0)
-        if self.is_a_instruct():
-            self.address = self.command[1:]
-        #if c instruct, parse the c instruction fields
-        elif self.is_c_instruct():
-            # if there are 3 fields in the instruction then first split it into
-            # the destination and the rest, then split the rest into the
-            # computation and jump fields
-            if '=' in self.command and ';' in self.command:
+    
+    def parse_a_instruct(self):
+        self.address = self.command[1:]
+
+    def parse_c_instruct(self):
+        """Parses a c-instruction into the 3 c instruction fields, ie
+        destination, computation and jump. Binds these fields to the
+        corresponding instance attributes."""
+
+        if '=' in self.command and ';' in self.command:
                 fields = self.command.split('=')
                 destination = fields[0]
                 fields = fields[1].split(';')
                 computation = fields[0]
                 jump = fields[1]
-            # if ';' is omitted, then jump is null
-            elif '=' in self.command:
-                fields = self.command.split('=')
-                destination = fields[0]
-                computation = fields[1]
-                jump = ''
-            # if '=' is ommitted, then dest is null
-            elif ';' in self.command:
-                fields = self.command.split(';')
-                computation = fields[0]
-                jump = fields[1]
-                destination = ''
-            # if both '=' and ';' are omitted, then both dest and jump are null
-            else:
-                computation = self.command
-                destination = jump = ''
-            self.dest = destination
-            self.comp = computation
-            self.jump = jump
-
-        elif self.is_l_instruct:
-            ####
-            ## Implement after successful testing for non-symbolic programs
-            ###
-            pass
+        # if ';' is omitted, then jump is null
+        elif '=' in self.command:
+            fields = self.command.split('=')
+            destination = fields[0]
+            computation = fields[1]
+            jump = ''
+        # if '=' is ommitted, then dest is null
+        elif ';' in self.command:
+            fields = self.command.split(';')
+            computation = fields[0]
+            jump = fields[1]
+            destination = ''
+        # if both '=' and ';' are omitted, then both dest and jump are null
         else:
-            raise TypeError('invalid command "{command}"'.format(command=self.command))
-    
+            computation = self.command
+            destination = jump = ''
+        self.dest = destination
+        self.comp = computation
+        self.jump = jump
+
+    def parse_l_instruct(self):
+        # return the command - the first and last characters (ie the parens)
+        return self.command[1:][:-1]
+
     @property
     def dest(self):
         return self._dest
