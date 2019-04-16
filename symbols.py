@@ -47,4 +47,7 @@ class SymbolTable:
         if symbol in self.table:
             return self.table[symbol]
         else:
-            return None 
+            return None
+
+    def in_table(self, symbol):
+        return True if symbol in self.table else False

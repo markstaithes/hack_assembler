@@ -10,9 +10,9 @@ class Parser:
     space and comments."""
 
     def __init__(self, infile):
-        self.instructions = Parser.clean_lines(infile)
+        self.instructions = self.clean_lines(infile)
 
-    def clean_lines(program_file):
+    def clean_lines(self, program_file):
         """This method 'cleans' the input instructions, given by an input
         assembly file, and outputs a python list of strings, each string being
         a Hack assembly instruction. The 'cleaning' is done  by removing all
@@ -30,7 +30,7 @@ class Parser:
                                 break # ignore comments
                             cleanline += char
                         # remove whitespace between instructions and comments
-                        cleanline.strip() 
+                        cleanline = cleanline.strip() 
                         instructions.append(cleanline) 
         return instructions
 
