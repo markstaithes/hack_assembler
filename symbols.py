@@ -41,13 +41,20 @@ class SymbolTable:
         self.table = table
 
     def add_symbol(self, symbol, value):
+        """Adds a symbol to the symbol table"""
+
         self.table[symbol] = value
 
     def get_value(self, symbol):
+        """Returns the value associated with the input symbol/key in the symbol
+        table. If there is no such key, returns None."""
+
         if symbol in self.table:
             return self.table[symbol]
         else:
             return None
 
     def in_table(self, symbol):
+        """Returns True if the input symbol is in the symbol table."""
+        
         return True if symbol in self.table else False

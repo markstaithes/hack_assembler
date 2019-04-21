@@ -1,6 +1,6 @@
 """
-A module containing the Parser and Evaluator classes used by the Hack assembler
-program. 
+A module containing the Parser and Evaluator classes used by HackAssembler
+objects.
 """
 
 class Parser:
@@ -22,34 +22,57 @@ class Parser:
         with open(program_file) as f:
             for line in f:
                 if line[0] != '/': # ignore comments
-                    line = line.strip(' \n')
+                    line = line.strip(' \n') # remove whitespace and eol
                     if line != '': # ignore empty lines
-                        cleanline = ''
-                        for char in line:
-                            if char == '/':
-                                break # ignore comments
-                            cleanline += char
-                        # remove whitespace between instructions and comments
-                        cleanline = cleanline.strip() 
-                        instructions.append(cleanline) 
+                        instructions.append(line)
+        instructions = list(map(self.remove_comments, instructions))
         return instructions
 
+    def remove_comments(self, line):
+        """Takes as input  a line(string) of Hack assembly code. Removes inline
+        comments from the line.
+        Outputs the clean line as a string."""
+
+        cleanline = ''
+        for char in line:
+            if char == '/':
+                break
+            cleanline += char
+        cleanline = cleanline.strip()
+        return cleanline
+
     def is_l_instruct(self):
+        """Returns True if the current instruction is a loop var declaration."""
+
         return self.command[0] == '('
 
     def is_a_instruct(self):
+        """Returns True if the current instruction is an a-instruction."""
+
         return self.command[0] == '@'
 
     def is_c_instruct(self):
+        """Returns True if the current instruction is a c-instruction."""
+
         return not self.is_l_instruct() and not self.is_a_instruct()
     
     def has_more_commands(self):
+        """Returns True if there are assembly instruction remaining, ie if there
+        are still instructions to be parsed."""
+
         return True if self.instructions else False
 
     def advance(self):
+        """Assigns the next assembly instruction as the current instruction, ie
+        current instruction being parsed. Removes the assembly instruction from
+        the list of assembly instructions."""
+
         self.command = self.instructions.pop(0)
     
     def parse_a_instruct(self):
+        """Parses an a-instruction and assigns the address to the corresponding
+        instance attribute."""
+        
         self.address = self.command[1:]
 
     def parse_c_instruct(self):
@@ -84,7 +107,10 @@ class Parser:
         self.jump = jump
 
     def parse_l_instruct(self):
-        # return the command - the first and last characters (ie the parens)
+        """Parses a loop variable declaration, ie an 'l-instruction.'  
+        Returns the 'instruction' minus  the first and last characters (ie the
+        parens), which is the loop var name."""
+
         return self.command[1:][:-1]
 
 class Evaluator:
